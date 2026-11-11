@@ -10,6 +10,7 @@ export function EditorialStory({ section }: { section: SectionOf<"editorial-stor
       intro={section.intro}
       chapters={section.chapters}
       outro={section.outro}
+      pinned={section.pinned ?? true}
     />
   );
 }

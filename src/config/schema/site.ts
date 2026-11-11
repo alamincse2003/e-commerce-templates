@@ -1,18 +1,47 @@
 import { z } from "zod";
 import { imageSchema } from "./catalog";
+import { hexColor } from "./theme";
 
 const link = z.object({ label: z.string(), href: z.string() });
 
 /** Every homepage section shares an anchor id, an on/off switch and an optional small kicker. */
 const base = { id: z.string(), enabled: z.boolean().optional(), eyebrow: z.string().optional() };
 
+const motifEnum = z.enum(["kantha", "floral", "deco"]);
+
 export const sectionSchema = z.discriminatedUnion("type", [
+  z.object({
+    ...base,
+    type: z.literal("motif-divider"),
+    /** Overrides the brand motif for this divider. */
+    motif: motifEnum.optional(),
+    /** Optional short line under the motif (e.g. "Handwoven in Bangladesh"). */
+    caption: z.string().optional(),
+  }),
+  z.object({
+    ...base,
+    type: z.literal("intro-hero"),
+    /** Short line revealed centre-stage while the photos fly in (first visit only). */
+    introTitle: z.string(),
+    title: z.string(),
+    description: z.string().optional(),
+    /** Exactly three studio shots: [left/back, centre/main, right/front]. Same backdrop works best. */
+    images: z.array(imageSchema).length(3),
+    ctas: z.array(link).max(2),
+    /** Match this to the photo backdrop so the shots melt into the stage. */
+    stageColor: hexColor.optional(),
+  }),
   z.object({
     ...base,
     type: z.literal("lookbook-hero"),
     title: z.string(),
     description: z.string(),
     lookIds: z.array(z.string()).min(2),
+    /**
+     * Scroll hand-off: after the last look, its photo flies down into this product's card in the
+     * next product grid (and back on scroll-up). Use the product whose image matches the last look.
+     */
+    handoffProductId: z.string().optional(),
   }),
   z.object({
     ...base,
@@ -79,6 +108,8 @@ export const sectionSchema = z.discriminatedUnion("type", [
   z.object({
     ...base,
     type: z.literal("editorial-story"),
+    /** Pin + scroll sideways on desktop (when the animation preset allows). Default true. */
+    pinned: z.boolean().optional(),
     title: z.string(),
     intro: z.string(),
     chapters: z
@@ -148,6 +179,8 @@ export const siteConfigSchema = z.object({
     /** Optional secondary-language line (e.g. Bangla) shown in the footer. */
     localTagline: z.string().optional(),
     description: z.string(),
+    /** Brand line-art used by motif dividers: kantha (Bengali running-stitch), floral, deco. */
+    motif: motifEnum.optional(),
     /** Optional image logo (overrides the wordmark in the header). */
     logo: z.object({ src: z.string(), alt: z.string(), width: z.number(), height: z.number() }).optional(),
     favicon: z.string().optional(),

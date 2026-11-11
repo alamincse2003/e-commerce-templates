@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
  * Classic campaign hero: one full-bleed photograph, or a two-panel split (e.g. Women / Men,
  * Saree / Panjabi). Text sits bottom-left on a soft scrim — photography does the talking.
  */
-export function CampaignHero({ section }: { section: SectionOf<"campaign-hero"> }) {
+export function CampaignHero({ section, first }: { section: SectionOf<"campaign-hero">; first: boolean }) {
   const split = section.panels.length === 2;
   return (
     <section id={section.id} aria-labelledby={`${section.id}-title`} className="relative isolate">
@@ -48,7 +48,7 @@ export function CampaignHero({ section }: { section: SectionOf<"campaign-hero"> 
       <div className="pointer-events-none absolute inset-x-0 bottom-0">
         <div className="container-theme pb-10 text-white lg:pb-14">
           {section.eyebrow ? <p className="t-small mb-4 opacity-85">{section.eyebrow}</p> : null}
-          <RevealText as="h1" id={`${section.id}-title`} trigger="load" className={cn("type-display t-hero split-safe", split ? "max-w-[10ch] md:max-w-[min(10ch,44vw)]" : "max-w-[14ch]")}>
+          <RevealText as={first ? "h1" : "h2"} id={`${section.id}-title`} trigger={first ? "load" : "scroll"} className={cn("type-display t-hero split-safe", split ? "max-w-[10ch] md:max-w-[min(10ch,44vw)]" : "max-w-[14ch]")}>
             {section.title}
           </RevealText>
           {section.description ? (

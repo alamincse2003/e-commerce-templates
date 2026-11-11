@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useTilt } from "@/animations/use-tilt";
 import { usePrice } from "@/components/providers/site-provider";
 import type { Product } from "@/config/schema/catalog";
 import { cn } from "@/lib/cn";
@@ -26,6 +27,7 @@ export function ProductCard({ product, sizes, featured, priority }: Props) {
   const add = useCartStore((s) => s.add);
   const [added, setAdded] = useState<string | null>(null);
   const [primary, secondary] = product.images;
+  const tilt = useTilt(featured ? 3 : 5);
 
   const quickAdd = (size: string) => {
     add(toCartLine(product, { size }));
@@ -34,7 +36,15 @@ export function ProductCard({ product, sizes, featured, priority }: Props) {
 
   return (
     <article className="group/card relative flex h-full flex-col">
-      <div className={cn("relative overflow-hidden rounded-card bg-surface", featured ? "aspect-[4/5] lg:aspect-auto lg:flex-1" : "aspect-[3/4]")}>
+      <div
+        data-product-media={product.id}
+        onPointerMove={tilt.onPointerMove}
+        onPointerLeave={tilt.onPointerLeave}
+        className={cn(
+          "relative overflow-hidden rounded-card bg-surface transition-transform duration-300 ease-out [transform:perspective(1000px)_rotateX(var(--rx,0deg))_rotateY(var(--ry,0deg))]",
+          featured ? "aspect-[4/5] lg:aspect-auto lg:flex-1" : "aspect-[3/4]",
+        )}
+      >
         <Image
           src={primary.src}
           alt={primary.alt}
@@ -58,6 +68,14 @@ export function ProductCard({ product, sizes, featured, priority }: Props) {
           />
         ) : null}
 
+        {/* Satin sheen that follows the pointer (2.5D light) */}
+        {tilt.enabled ? (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-0 mix-blend-soft-light transition-opacity duration-500 group-hover/card:opacity-100 [background:radial-gradient(circle_at_var(--sx,50%)_var(--sy,30%),rgb(255_255_255/0.55),transparent_55%)]"
+          />
+        ) : null}
+
         <div className="absolute inset-x-2 top-2 flex items-start justify-between">
           {product.badge ? <span className="t-small bg-background px-2 py-0.5">{product.badge}</span> : <span />}
           <WishlistButton productId={product.id} name={product.name} className="glass h-8 w-8 border" />
@@ -74,6 +92,7 @@ export function ProductCard({ product, sizes, featured, priority }: Props) {
                   key={size}
                   type="button"
                   disabled={soldOut}
+                  data-add-to-bag
                   onClick={() => quickAdd(size)}
                   className="t-small min-w-9 border border-border px-2 py-1 transition-colors hover:border-foreground hover:bg-foreground hover:text-background disabled:line-through disabled:opacity-40"
                   aria-label={`Add ${product.name}, size ${size}, to bag`}
@@ -98,6 +117,7 @@ export function ProductCard({ product, sizes, featured, priority }: Props) {
       </div>
       <button
         type="button"
+        data-add-to-bag
         onClick={() => quickAdd(toCartLine(product).size)}
         className="t-small mt-2 self-start underline underline-offset-4 md:hidden"
       >

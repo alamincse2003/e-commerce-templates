@@ -3,8 +3,6 @@
 import { Heart, Menu, Search, ShoppingBag } from "lucide-react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useState } from "react";
-import { useAnimationConfig } from "@/animations/animation-provider";
-import { uiTransition } from "@/animations/motion-variants";
 import { cn } from "@/lib/cn";
 import { selectCount, useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
@@ -20,11 +18,9 @@ type Props = {
 
 const iconBtn = "relative inline-flex h-10 w-10 items-center justify-center transition-opacity hover:opacity-60";
 
-/** Nav left · wordmark centre · utilities right. Tucks away on scroll-down, returns on scroll-up. */
+/** Nav left · wordmark centre · utilities right. Always sticky; frosts once the page scrolls. */
 export function Header({ wordmark, logo, links }: Props) {
-  const a = useAnimationConfig();
   const { scrollY } = useScroll();
-  const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const count = useCartStore(selectCount);
@@ -32,8 +28,6 @@ export function Header({ wordmark, logo, links }: Props) {
   const wished = useWishlistStore((s) => s.ids.length);
 
   useMotionValueEvent(scrollY, "change", (y) => {
-    const prev = scrollY.getPrevious() ?? 0;
-    setHidden(y > prev && y > 320);
     setScrolled(y > 8);
   });
 
@@ -41,8 +35,6 @@ export function Header({ wordmark, logo, links }: Props) {
     <>
       <motion.header
         className={cn("sticky top-0 z-40 border-b transition-colors duration-300", scrolled ? "glass border-border" : "border-transparent bg-background")}
-        animate={{ y: hidden && !menuOpen ? "-100%" : "0%" }}
-        transition={uiTransition(a)}
       >
         <div className="container-theme h-header grid grid-cols-[1fr_auto_1fr] items-center gap-6">
           <div className="flex items-center">
@@ -76,7 +68,9 @@ export function Header({ wordmark, logo, links }: Props) {
               {wished ? <span className="absolute top-1.5 right-1 text-[10px] tabular-nums">{wished}</span> : null}
             </span>
             <button type="button" onClick={openCart} className={cn(iconBtn, "-mr-2")} aria-label={`Open bag, ${count} items`}>
-              <ShoppingBag className="h-4.5 w-4.5" strokeWidth={1.3} />
+              <span data-bag-icon className="inline-flex">
+                <ShoppingBag className="h-4.5 w-4.5" strokeWidth={1.3} />
+              </span>
               {count ? (
                 <span className="absolute top-1 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 text-[10px] leading-none text-background tabular-nums">
                   {count}

@@ -47,7 +47,7 @@ export function RunwayProducts({ look }: { look: RunwayLook }) {
                 </div>
                 <div className="hidden flex-col items-center gap-1 lg:flex">
                   <WishlistButton productId={p.id} name={p.name} />
-                  <button type="button" onClick={() => add(toCartLine(p))} aria-label={`Add ${p.name} to bag`} className="inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-foreground hover:text-background">
+                  <button type="button" data-add-to-bag onClick={() => add(toCartLine(p))} aria-label={`Add ${p.name} to bag`} className="inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-foreground hover:text-background">
                     <Plus className="h-4 w-4" strokeWidth={1.4} />
                   </button>
                 </div>
@@ -57,7 +57,7 @@ export function RunwayProducts({ look }: { look: RunwayLook }) {
                   <p className="truncate text-sm">{p.name}</p>
                   <p className="text-xs tabular-nums text-muted-foreground">{price(p.price)}</p>
                 </div>
-                <button type="button" onClick={() => add(toCartLine(p))} aria-label={`Add ${p.name} to bag`} className="-mr-1 inline-flex h-8 w-8 items-center justify-center">
+                <button type="button" data-add-to-bag onClick={() => add(toCartLine(p))} aria-label={`Add ${p.name} to bag`} className="-mr-1 inline-flex h-8 w-8 items-center justify-center">
                   <Plus className="h-4 w-4" strokeWidth={1.4} />
                 </button>
               </div>

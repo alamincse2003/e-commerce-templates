@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { getCollections } from "@/clients";
+import { RevealMedia } from "@/components/animations/reveal-media";
 import { StaggerContainer, StaggerItem } from "@/components/animations/stagger-container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import type { SectionOf } from "@/config/schema/site";
@@ -14,11 +15,12 @@ export function CategoryGrid({ section }: { section: SectionOf<"category-grid"> 
     <section id={section.id} aria-labelledby={`${section.id}-title`} className="section-y">
       <div className="container-theme">
         <SectionHeading title={section.title} eyebrow={section.eyebrow} link={section.cta} titleId={`${section.id}-title`} />
+        <RevealMedia>
         <StaggerContainer as="ul" className={cn("gap-theme mt-10 grid grid-cols-2 gap-y-8 lg:mt-12", cols)}>
           {collections.map((c) => (
             <StaggerItem as="li" key={c.slug}>
               <a href={c.href} className="group block">
-                <div className="relative aspect-[3/4] overflow-hidden rounded-card bg-surface">
+                <div data-collection-media className="relative aspect-[3/4] overflow-hidden rounded-card bg-surface">
                   <Image
                     src={c.image.src}
                     alt={c.image.alt}
@@ -37,6 +39,7 @@ export function CategoryGrid({ section }: { section: SectionOf<"category-grid"> 
             </StaggerItem>
           ))}
         </StaggerContainer>
+        </RevealMedia>
       </div>
     </section>
   );

@@ -23,6 +23,7 @@ function FitBarInner({ product, className }: { product: Product; className?: str
 
   return (
     <div
+      data-product-scope
       className={cn(
         "mt-6 flex flex-wrap items-center gap-x-8 gap-y-4 p-3 pr-3 lg:absolute lg:bottom-8 lg:left-1/2 lg:mt-0 lg:w-max lg:max-w-[calc(100%-4rem)] lg:-translate-x-1/2 lg:flex-nowrap",
         className,
@@ -81,6 +82,7 @@ function FitBarInner({ product, className }: { product: Product; className?: str
 
       <button
         type="button"
+        data-add-to-bag
         onClick={() => add(toCartLine(product, { size, color: product.colors[color].name }))}
         className="t-label ml-auto h-11 rounded-button bg-button px-6 text-button-foreground transition-opacity hover:opacity-85"
       >

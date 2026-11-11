@@ -279,7 +279,7 @@ export function createDemoCatalog(marks: BrandMarks): Catalog {
       name: "Corduroy Shirt Dress",
       category: "dresses",
       price: 460,
-      images: [photo(PHOTO.corduroyDress, "Burgundy corduroy shirt dress")],
+      images: [photo(PHOTO.corduroyDress, "Burgundy corduroy shirt dress", "50% 30%")],
       colors: [{ name: "Burgundy", hex: "#6E1B33" }],
       sizes: SIZES_APPAREL,
       description: "Needlecord with a gathered skirt and covered placket.",

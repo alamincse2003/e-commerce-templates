@@ -19,6 +19,7 @@ type Props = {
   intro: string;
   chapters: Chapter[];
   outro: { title: string; cta: { label: string; href: string } };
+  pinned: boolean;
 };
 
 /**
@@ -27,7 +28,7 @@ type Props = {
  * Otherwise (mobile, Minimal preset, motion off, no JS) it is a vertical story — the horizontal
  * layout only exists while the section is pinned (`.is-pinned` toggled by GSAP matchMedia).
  */
-export function HorizontalStory({ id, eyebrow, title, intro, chapters, outro }: Props) {
+export function HorizontalStory({ id, eyebrow, title, intro, chapters, outro, pinned }: Props) {
   const a = useAnimationConfig();
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -47,7 +48,7 @@ export function HorizontalStory({ id, eyebrow, title, intro, chapters, outro }: 
       };
 
       mm.add({ desktop: "(min-width: 1024px)" }, (ctx) => {
-        if (!ctx.conditions?.desktop || !a.horizontalStory) {
+        if (!ctx.conditions?.desktop || !a.horizontalStory || !pinned) {
           verticalReveals();
           return;
         }
@@ -85,7 +86,7 @@ export function HorizontalStory({ id, eyebrow, title, intro, chapters, outro }: 
 
       return () => mm.revert();
     },
-    { scope: section, dependencies: [a.signature], revertOnUpdate: true },
+    { scope: section, dependencies: [a.signature, pinned], revertOnUpdate: true },
   );
 
   return (

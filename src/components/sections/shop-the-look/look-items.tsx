@@ -58,6 +58,7 @@ export function LookItems({ look, activeItem, onActiveItem }: Props) {
               </div>
               <button
                 type="button"
+                data-add-to-bag
                 onClick={() => add(toCartLine(product))}
                 onFocus={() => onActiveItem(i)}
                 onBlur={() => onActiveItem(null)}

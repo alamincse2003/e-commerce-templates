@@ -54,6 +54,7 @@ export function splitReveal(
   return SplitText.create(el, {
     type,
     mask: "lines",
+    aria: "none",
     autoSplit: true,
     onSplit(self) {
       gsap.set(el, { visibility: "visible" });
@@ -74,7 +75,7 @@ export function splitReveal(
 
 /** Words brighten one by one as the paragraph scrolls through the viewport. */
 export function scrubWords(el: HTMLElement) {
-  const split = SplitText.create(el, { type: "words" });
+  const split = SplitText.create(el, { type: "words", aria: "none" });
   gsap.fromTo(
     split.words,
     { opacity: 0.16 },

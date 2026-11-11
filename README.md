@@ -15,18 +15,10 @@ npm install
 npm run dev                                # http://localhost:3000
 npm run build && npm start                 # production
 
-NEXT_PUBLIC_CLIENT=urban-wear npm run dev  # switch client
 NEXT_PUBLIC_PREVIEW_PANEL=false npm run build   # ship without the demo panel
 ```
 
-Sample clients:
-
-| Client | Market | Theme | Notes |
-| --- | --- | --- | --- |
-| `maison-studio` (default) | International | Atelier | USD, runway hero |
-| `heritage-bd` | Bangladesh | Heritage | BDT ৳, panjabi/saree catalog, Bangla copy, bKash/Nagad/COD badges, campaign hero |
-| `urban-wear` | Streetwear | Streetwear | EUR, rail-first |
-| `organic-fashion` | Slow fashion | Organic | GBP, storytelling-first |
+Active client: `maison-studio` (Maison Ã‰lan, international, USD). Add more clients under `src/clients/` (see **Adding a client**).
 
 ## Design principles
 
@@ -46,6 +38,7 @@ Each section comes from the client's `site.config.ts`, in the order listed there
 
 | Type | What it does | Animation owner |
 | --- | --- | --- |
+| `intro-hero` | Cinematic first-visit intro (~3.5s, once per session, skippable): intro line reveals, three photos fly in and fan, then open into the final hero. The markup is the final layout, so SEO, no-JS, reduced motion and return visits see it directly. Set `stageColor` to the photo backdrop so the shots blend in. | GSAP timeline + SplitText |
 | `campaign-hero` | One full-bleed photo or a two-panel split (Women / Men), headline and two CTAs | GSAP SplitText, Motion |
 | `service-highlights` | Trust strip: delivery, exchange, COD, secure payment | Motion stagger |
 | `category-grid` | "Shop by category" portrait tiles | Motion stagger |
@@ -72,13 +65,12 @@ src/
     schema/                Zod schemas: theme, animation, site/sections, catalog
     themes/index.ts        4 presets: luxury, minimal, streetwear, organic
     fonts.ts / fonts.meta.ts   next/font registry, exposed as CSS variables
-    site.config.ts         active-client entry point (siteConfig, themeConfig, …)
+    site.config.ts         active-client entry point (siteConfig, themeConfig, â€¦)
   clients/
     _demo/                 shared demo catalog + Unsplash media helper
-    maison-studio/         site.config · theme.config · animation.config · products · index
-    urban-wear/  organic-fashion/
+    maison-studio/         site.config Â· theme.config Â· animation.config Â· products Â· index
     index.ts               registry, validation, cross-reference checks, lookups
-  theme/                   theme → CSS vars, no-flash boot script, preview controller
+  theme/                   theme â†’ CSS vars, no-flash boot script, preview controller
   animations/              presets, provider, Lenis, GSAP utils, scroll recipes, Motion variants
   components/
     layout/ ui/ cart/ products/ animations/ sections/<one folder per section>
@@ -89,7 +81,7 @@ src/
 ## Theme engine
 
 - A theme sets colours, typography, layout tokens and effects. It is validated with Zod (`config/schema/theme.ts`).
-- `theme/css-vars.ts` turns a theme into `--t-*` CSS variables. `globals.css` maps those into Tailwind tokens (`bg-background`, `text-accent`, `font-display`, `rounded-card`, …).
+- `theme/css-vars.ts` turns a theme into `--t-*` CSS variables. `globals.css` maps those into Tailwind tokens (`bg-background`, `text-accent`, `font-display`, `rounded-card`, â€¦).
 - Components never hardcode brand colours. Changing the theme re-skins everything.
 - Helper utilities `type-display`, `type-heading`, `type-logo`, the `t-*` type scale, `container-theme`, `section-y` and `glass` read the theme tokens.
 - **Presets:**

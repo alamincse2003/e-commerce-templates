@@ -110,6 +110,28 @@ html[data-motion="on"] [data-reveal] {
   visibility: hidden;
   animation: reveal-failsafe 0s 3s forwards;
 }
+/*
+ * Cinematic hero intro (first visit per session). The boot script adds .intro-pending before paint,
+ * so the final hero never flashes before the intro starts. Failsafes reveal everything if JS stalls.
+ */
+[data-intro="overlay"] {
+  display: none;
+}
+html.intro-pending [data-intro="overlay"] {
+  display: flex;
+  animation: intro-failsafe-hide 0s 7s forwards;
+}
+html.intro-pending [data-intro="hide"] {
+  visibility: hidden;
+  animation: reveal-failsafe 0s 7s forwards;
+}
+@keyframes intro-failsafe-hide {
+  to {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
 html[data-motion="off"] .animate-marquee {
   animation-play-state: paused;
 }
@@ -215,6 +237,11 @@ html[data-motion="off"] .animate-marquee {
     background: var(--t-background) !important;
     backdrop-filter: none !important;
   }
+}
+
+/* Scroll hand-off: images hidden while their flying copy travels between sections. */
+[data-handoff-hidden] img {
+  opacity: 0 !important;
 }
 
 /* Studio photos melt into light page backgrounds (see theme.effects.imageBlend). */

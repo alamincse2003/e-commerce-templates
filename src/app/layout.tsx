@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { AnimationProvider } from "@/animations/animation-provider";
 import { LenisProvider } from "@/animations/lenis-provider";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { FlyToBag } from "@/components/cart/fly-to-bag";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -35,7 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <ThemeHead theme={themeConfig} animationsEnabled={animationConfig.enabled} previewEnabled={previewEnabled} />
       </head>
-      <body id="top">
+      {/* suppressHydrationWarning: browser extensions (ColorZilla, Grammarly…) inject attributes on <body>. */}
+      <body id="top" suppressHydrationWarning>
         <SiteProvider value={site}>
           <AnimationProvider base={animationConfig}>
             <LenisProvider>
@@ -48,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <main id="main">{children}</main>
               <Footer site={siteConfig} />
               <CartDrawer />
+              <FlyToBag />
               {previewEnabled ? <PreviewLoader clientTheme={themeConfig} clientName={siteConfig.brand.name} /> : null}
             </LenisProvider>
           </AnimationProvider>

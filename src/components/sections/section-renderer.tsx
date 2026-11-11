@@ -6,7 +6,9 @@ import { ClothingRail } from "./clothing-rail";
 import { CollectionsRing } from "./collections-ring";
 import { EditorialStory } from "./editorial-story";
 import { FittingRoom } from "./fitting-room";
+import { IntroHero } from "./intro-hero";
 import { LookbookHero } from "./lookbook-hero";
+import { MotifDivider } from "./motif-divider";
 import { Newsletter } from "./newsletter";
 import { ProductGrid } from "./product-grid";
 import { ServiceHighlights } from "./service-highlights";
@@ -14,7 +16,8 @@ import { PromoBanner } from "./promo-banner";
 import { ShopTheLook } from "./shop-the-look";
 import { Testimonials } from "./testimonials";
 
-type Ctx = { threeD: boolean };
+/** `first` = this section opens the page, so it owns the page <h1>. */
+type Ctx = { threeD: boolean; first: boolean; motif?: "kantha" | "floral" | "deco" };
 
 /**
  * Maps a section config to its component. Homepages are composed purely from config —
@@ -22,10 +25,14 @@ type Ctx = { threeD: boolean };
  */
 export function SectionRenderer({ section, ctx }: { section: SectionConfig; ctx: Ctx }) {
   switch (section.type) {
+    case "motif-divider":
+      return <MotifDivider section={section} brandMotif={ctx.motif} />;
+    case "intro-hero":
+      return <IntroHero section={section} first={ctx.first} />;
     case "lookbook-hero":
-      return <LookbookHero section={section} />;
+      return <LookbookHero section={section} first={ctx.first} />;
     case "campaign-hero":
-      return <CampaignHero section={section} />;
+      return <CampaignHero section={section} first={ctx.first} />;
     case "service-highlights":
       return <ServiceHighlights section={section} />;
     case "category-grid":
