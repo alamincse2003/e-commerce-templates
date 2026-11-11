@@ -55,7 +55,8 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
   const scrollTo = useCallback((target: string | HTMLElement | number) => {
     const lenis = lenisRef.current;
     if (lenis) {
-      lenis.scrollTo(target, { offset: -80 });
+      // Anchor offset only applies to element targets; numeric targets are exact positions.
+      lenis.scrollTo(target, typeof target === "number" ? {} : { offset: -80 });
       return;
     }
     if (typeof target === "number") window.scrollTo({ top: target, behavior: "smooth" });

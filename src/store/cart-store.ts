@@ -54,7 +54,7 @@ export const useCartStore = create<CartState>()(
     (set) => ({
       lines: [],
       isOpen: false,
-      add: (line, opts) => set((s) => ({ lines: merge(s.lines, [line]), isOpen: opts?.open ?? true })),
+      add: (line, opts) => set((s) => ({ lines: merge(s.lines, [line]), isOpen: opts?.open ?? false })),
       addMany: (lines, opts) => set((s) => ({ lines: merge(s.lines, lines), isOpen: opts?.open ?? true })),
       setQuantity: (key, quantity) =>
         set((s) => ({

@@ -1,7 +1,7 @@
 "use client";
 
 import { MotionConfig } from "motion/react";
-import { createContext, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { useShallow } from "zustand/react/shallow";
 import type { AnimationConfig, ResolvedAnimation } from "@/config/schema/animation";
 import { usePreviewStore } from "@/store/preview-store";
@@ -51,10 +51,16 @@ export function AnimationProvider({ base, children }: { base: AnimationConfig; c
     };
   }, [base, preview, reducedMotion]);
 
+  const mounted = useRef(false);
   useEffect(() => {
     document.documentElement.dataset.motion = value.enabled ? "on" : "off";
     document.documentElement.style.setProperty("--marquee-duration", `${value.marqueeDuration}s`);
-    // Layout may change when animation modes switch (e.g. pinned story on/off).
+    // ScrollTrigger refreshes itself on load; only force a refresh when settings change later
+    // (e.g. preview panel toggles a pinned layout), not on first mount.
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
     const id = window.setTimeout(() => ScrollTrigger.refresh(), 60);
     return () => window.clearTimeout(id);
   }, [value.enabled, value.marqueeDuration, value.signature]);

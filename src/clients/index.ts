@@ -4,11 +4,8 @@ import { animationConfigSchema, type AnimationConfig } from "@/config/schema/ani
 import { catalogSchema, type Catalog, type Collection, type Look, type Product } from "@/config/schema/catalog";
 import { siteConfigSchema, type SiteConfig } from "@/config/schema/site";
 import { themeSchema, type Theme } from "@/config/schema/theme";
-import heritageBd from "./heritage-bd";
 import maisonStudio from "./maison-studio";
-import organicFashion from "./organic-fashion";
 import type { ClientDefinition } from "./types";
-import urbanWear from "./urban-wear";
 
 /**
  * Client registry. Add a folder under /clients, register it here, and select it with
@@ -17,9 +14,6 @@ import urbanWear from "./urban-wear";
  */
 const registry = {
   "maison-studio": maisonStudio,
-  "heritage-bd": heritageBd,
-  "urban-wear": urbanWear,
-  "organic-fashion": organicFashion,
 } satisfies Record<string, ClientDefinition>;
 
 export type ClientId = keyof typeof registry;
@@ -60,6 +54,7 @@ function resolveClient(def: ClientDefinition): ResolvedClient {
     const where = `section ${s.id}`;
     if ("productIds" in s) s.productIds.forEach((id) => need(productIds, id, where));
     if ("lookIds" in s) s.lookIds.forEach((id) => need(lookIds, id, where));
+    if (s.type === "lookbook-hero" && s.handoffProductId) need(productIds, s.handoffProductId, where);
     if ("collectionSlugs" in s) s.collectionSlugs.forEach((id) => need(collectionSlugs, id, where));
     if (s.type === "fitting-room") s.categories.forEach((c) => c.productIds.forEach((id) => need(productIds, id, where)));
     if (s.type === "testimonials") s.items.forEach((t) => t.productId && need(productIds, t.productId, where));

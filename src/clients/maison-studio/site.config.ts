@@ -6,6 +6,7 @@ export default defineSite({
   brand: {
     name: "Maison Élan",
     wordmark: "Maison Élan",
+    motif: "deco",
     tagline: "Quiet luxury, made slowly.",
     description: "An independent Paris atelier making considered wardrobes in natural fibres, finished by hand in small runs.",
   },
@@ -74,6 +75,15 @@ export default defineSite({
         title: "Spring Summer 2027",
         description: "Fluid silks, structured wool and hand-finished leather for a slower, more beautiful season.",
         lookIds: ["look-13", "look-14", "look-15", "look-16", "look-17"],
+        handoffProductId: "corduroy-dress",
+      },
+      {
+        id: "new-arrivals",
+        type: "product-grid",
+        title: "New arrivals",
+        layout: "asymmetric",
+        productIds: ["corduroy-dress", "cotton-trench", "ivory-suit", "lounge-set", "poplin-shirt"],
+        cta: { label: "Shop all new in", href: "#new-arrivals" },
       },
       {
         id: "services",
@@ -91,14 +101,6 @@ export default defineSite({
         title: "Shop by category",
         collectionSlugs: ["women", "men", "knitwear", "outerwear"],
         cta: { label: "View all", href: "#new-arrivals" },
-      },
-      {
-        id: "new-arrivals",
-        type: "product-grid",
-        title: "New arrivals",
-        layout: "uniform",
-        productIds: ["cotton-trench", "ivory-suit", "lounge-set", "poplin-shirt", "wrap-coat", "glen-blazer", "rib-sweater", "belted-trench"],
-        cta: { label: "Shop all new in", href: "#new-arrivals" },
       },
       {
         id: "the-drop",
@@ -130,6 +132,7 @@ export default defineSite({
       {
         id: "story",
         type: "editorial-story",
+        pinned: false,
         eyebrow: "Journal",
         title: "Made slowly",
         intro: "Four chapters from the atelier — from raw fibre to the finished garment.",
@@ -154,6 +157,7 @@ export default defineSite({
           { label: "Knitwear", productIds: ["rib-sweater", "intarsia-knit", "crochet-poncho"] },
         ],
       },
+      { id: "divider-house", type: "motif-divider" },
       {
         id: "the-house",
         type: "brand-statement",

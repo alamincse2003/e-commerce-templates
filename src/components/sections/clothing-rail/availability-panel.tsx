@@ -45,6 +45,7 @@ export function AvailabilityPanel({ open, product, onClose }: { open: boolean; p
                     <button
                       type="button"
                       disabled={soldOut}
+                      data-add-to-bag
                       onClick={() => add(toCartLine(product, { size }))}
                       className="t-small w-full border border-inverse-foreground/30 py-2 transition-colors hover:bg-inverse-foreground hover:text-inverse disabled:border-inverse-foreground/10 disabled:line-through disabled:opacity-40"
                       aria-label={soldOut ? `Size ${size} sold out` : `Add size ${size} to bag`}

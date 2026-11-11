@@ -1,4 +1,5 @@
 import { getProducts } from "@/clients";
+import { RevealMedia } from "@/components/animations/reveal-media";
 import { StaggerContainer, StaggerItem } from "@/components/animations/stagger-container";
 import { ProductCard } from "@/components/products/product-card";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -18,6 +19,7 @@ export function ProductGrid({ section }: { section: SectionOf<"product-grid"> })
           titleId={`${section.id}-title`}
           link={section.cta}
         />
+        <RevealMedia>
         <StaggerContainer as="ul" className="gap-theme mt-10 grid grid-cols-2 gap-y-10 lg:mt-12 lg:grid-cols-4">
           {products.map((p, i) => {
             const featured = asymmetric && i === 0;
@@ -32,6 +34,7 @@ export function ProductGrid({ section }: { section: SectionOf<"product-grid"> })
             );
           })}
         </StaggerContainer>
+        </RevealMedia>
       </div>
     </section>
   );

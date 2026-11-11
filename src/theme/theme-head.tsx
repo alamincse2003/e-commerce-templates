@@ -3,6 +3,8 @@ import { cssVarsToString, themeToCssVars } from "./css-vars";
 
 /** localStorage key holding the computed CSS vars of the last applied preview theme. */
 export const THEME_CACHE_KEY = "nidus-theme-cache";
+/** sessionStorage flag: the cinematic hero intro has played this visit. */
+export const INTRO_SEEN_KEY = "nidus-intro-seen";
 
 type Props = { theme: Theme; animationsEnabled: boolean; previewEnabled: boolean };
 
@@ -18,7 +20,7 @@ export function ThemeHead({ theme, animationsEnabled, previewEnabled }: Props) {
     previewEnabled
       ? `var c=JSON.parse(localStorage.getItem('${THEME_CACHE_KEY}')||'null');if(c){for(var k in c.vars)d.style.setProperty(k,c.vars[k]);if(c.motion)m=c.motion;}`
       : ""
-  }if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)m='off';}catch(e){}d.setAttribute('data-motion',m);})();`;
+  }if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)m='off';if(m==='on'&&(/[?&]intro/.test(location.search)||!sessionStorage.getItem('${INTRO_SEEN_KEY}')))d.classList.add('intro-pending');}catch(e){}d.setAttribute('data-motion',m);})();`;
 
   return (
     <>
