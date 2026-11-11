@@ -1,26 +1,239 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * Theme bridge: every color/font/radius utility resolves to a runtime CSS variable (--t-*),
+ * injected from the active theme config. Components never hardcode brand values.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--t-background);
+  --color-foreground: var(--t-foreground);
+  --color-surface: var(--t-surface);
+  --color-card: var(--t-card);
+  --color-card-foreground: var(--t-card-foreground);
+  --color-primary: var(--t-primary);
+  --color-primary-foreground: var(--t-primary-foreground);
+  --color-secondary: var(--t-secondary);
+  --color-secondary-foreground: var(--t-secondary-foreground);
+  --color-accent: var(--t-accent);
+  --color-accent-foreground: var(--t-accent-foreground);
+  --color-muted: var(--t-muted);
+  --color-muted-foreground: var(--t-muted-foreground);
+  --color-border: var(--t-border);
+  --color-button: var(--t-button);
+  --color-button-foreground: var(--t-button-foreground);
+  --color-inverse: var(--t-inverse);
+  --color-inverse-foreground: var(--t-inverse-foreground);
+
+  --font-display: var(--t-font-display);
+  --font-heading: var(--t-font-heading);
+  --font-body: var(--t-font-body);
+  --font-logo: var(--t-font-logo);
+
+  --radius-theme: var(--t-radius);
+  --radius-button: var(--t-radius-button);
+  --radius-card: var(--t-radius-card);
+  --shadow-theme: var(--t-shadow);
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-ping-soft: ping-soft 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+/* Failsafe: never leave content hidden if JS-driven reveals don't run. */
+@keyframes reveal-failsafe {
+  to {
+    visibility: visible;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    background: var(--t-background);
+    color: var(--t-foreground);
+    scroll-padding-top: calc(var(--t-header-height) + 1rem);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-size: 0.9375rem;
+    font-family: var(--t-font-body);
+    font-weight: var(--t-fw-body);
+    line-height: var(--t-leading-body);
+    letter-spacing: var(--t-tracking-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--t-accent);
+    color: var(--t-accent-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--t-accent);
+    outline-offset: 3px;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* Grain overlay — toggled per theme via --t-grain (0/1). */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: calc(var(--t-grain, 0) * 0.06);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Elements revealed by GSAP start hidden only when motion is on (set pre-paint by the boot script). */
+html[data-motion="on"] [data-reveal] {
+  visibility: hidden;
+  animation: reveal-failsafe 0s 3s forwards;
+}
+html[data-motion="off"] .animate-marquee {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-ping-soft {
+    animation: none !important;
+  }
+}
+
+@utility type-display {
+  font-family: var(--t-font-display);
+  font-weight: var(--t-fw-display);
+  letter-spacing: var(--t-tracking-display);
+  line-height: var(--t-leading-display);
+  text-transform: var(--t-case-display);
+}
+@utility type-heading {
+  font-family: var(--t-font-heading);
+  font-weight: var(--t-fw-heading);
+  letter-spacing: var(--t-tracking-heading);
+  line-height: var(--t-leading-heading);
+  text-transform: var(--t-case-heading);
+}
+@utility type-logo {
+  font-family: var(--t-font-logo);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+/*
+ * Type scale — the ONLY sizes sections should use. A small fixed scale is what makes a page
+ * feel designed rather than assembled.
+ *   t-hero   hero / campaign titles (display face)
+ *   t-h1     section titles
+ *   t-h2     sub-titles, card titles in features
+ *   t-lead   intro paragraphs, statements
+ *   t-body   default copy (15px)
+ *   t-small  meta, prices, captions (13px)
+ *   t-label  uppercase labels — use sparingly (nav, buttons, tags)
+ */
+@utility t-hero {
+  font-size: clamp(2.75rem, 6.2vw, 6.75rem);
+}
+@utility t-h1 {
+  font-size: clamp(1.75rem, 2.6vw, 2.625rem);
+}
+@utility t-h2 {
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+}
+@utility t-lead {
+  font-size: clamp(1.0625rem, 1.35vw, 1.3125rem);
+  line-height: 1.5;
+}
+@utility t-body {
+  font-size: 0.9375rem;
+}
+@utility t-small {
+  font-size: 0.8125rem;
+}
+@utility t-label {
+  font-family: var(--t-font-body);
+  font-size: 0.71875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: var(--t-tracking-caps);
+  text-transform: uppercase;
+}
+/* Small uppercase labels used throughout the editorial UI. */
+@utility type-caps {
+  font-family: var(--t-font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: var(--t-tracking-caps);
+  text-transform: uppercase;
+}
+@utility container-theme {
+  width: 100%;
+  max-width: var(--t-container);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 3.5rem);
+}
+@utility section-y {
+  padding-block: var(--t-section-spacing);
+}
+@utility gap-theme {
+  gap: var(--t-grid-gap);
+}
+/*
+ * Frosted glass for UI that floats over photography. Driven by theme.effects.glass (--t-glass 0/1):
+ * at 0 it resolves to a solid surface, so components never need to branch.
+ */
+@utility glass {
+  background: color-mix(in oklab, var(--t-background) calc(100% - var(--t-glass, 0) * 32%), transparent);
+  backdrop-filter: blur(calc(var(--t-glass, 0) * 18px)) saturate(calc(100% + var(--t-glass, 0) * 60%));
+  -webkit-backdrop-filter: blur(calc(var(--t-glass, 0) * 18px)) saturate(calc(100% + var(--t-glass, 0) * 60%));
+  border-color: color-mix(in oklab, var(--t-background) calc(var(--t-glass, 0) * 55%), var(--t-border));
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--t-background) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Studio photos melt into light page backgrounds (see theme.effects.imageBlend). */
+@utility blend-theme {
+  mix-blend-mode: var(--t-image-blend, normal);
+}
+@utility h-header {
+  height: var(--t-header-height);
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+/* SplitText line masks keep descenders visible. */
+@utility split-safe {
+  & > div {
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
 }

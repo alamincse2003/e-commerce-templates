@@ -1,0 +1,95 @@
+import type {
+  AnimationConfig,
+  AnimationPreset,
+  AnimationPresetId,
+  ResolvedAnimation,
+} from "@/config/schema/animation";
+
+export const ANIMATION_PRESETS: Record<AnimationPresetId, AnimationPreset> = {
+  luxury: {
+    id: "luxury",
+    label: "Luxury",
+    description: "Slow fades, elegant line reveals, subtle parallax.",
+    duration: 1.4,
+    delay: 0.08,
+    stagger: 0.12,
+    ease: { css: [0.22, 1, 0.36, 1], gsap: "expo.out" },
+    reveal: { y: 36, scale: 1, blur: 6 },
+    text: { split: "lines", yPercent: 105, rotate: 0 },
+    image: { clip: "up", scale: 1.18 },
+    parallax: 10,
+    hover: { scale: 1.035, lift: 0 },
+    scroll: { start: "top 84%", scrub: 1.2, once: true },
+    horizontalStory: true,
+    marqueeDuration: 42,
+  },
+  minimal: {
+    id: "minimal",
+    label: "Minimal",
+    description: "Subtle fades and small translates. Light and quick.",
+    duration: 0.8,
+    delay: 0,
+    stagger: 0.06,
+    ease: { css: [0.25, 0.1, 0.25, 1], gsap: "power2.out" },
+    reveal: { y: 14, scale: 1, blur: 0 },
+    text: { split: "lines", yPercent: 60, rotate: 0 },
+    image: { clip: "none", scale: 1.04 },
+    parallax: 4,
+    hover: { scale: 1.015, lift: 0 },
+    scroll: { start: "top 88%", scrub: true, once: true },
+    horizontalStory: false,
+    marqueeDuration: 36,
+  },
+  bold: {
+    id: "bold",
+    label: "Bold",
+    description: "Hard-hitting character reveals, scale, fast cuts.",
+    duration: 0.75,
+    delay: 0,
+    stagger: 0.05,
+    ease: { css: [0.76, 0, 0.24, 1], gsap: "power4.out" },
+    reveal: { y: 80, scale: 0.92, blur: 0 },
+    text: { split: "chars", yPercent: 120, rotate: 8 },
+    image: { clip: "center", scale: 1.3 },
+    parallax: 18,
+    hover: { scale: 1.06, lift: -6 },
+    scroll: { start: "top 90%", scrub: 0.6, once: true },
+    horizontalStory: true,
+    marqueeDuration: 18,
+  },
+  creative: {
+    id: "creative",
+    label: "Creative",
+    description: "Staggered word reveals, image masks, scroll storytelling.",
+    duration: 1.1,
+    delay: 0.04,
+    stagger: 0.09,
+    ease: { css: [0.16, 1, 0.3, 1], gsap: "power3.out" },
+    reveal: { y: 60, scale: 0.96, blur: 10 },
+    text: { split: "words", yPercent: 110, rotate: 4 },
+    image: { clip: "left", scale: 1.25 },
+    parallax: 16,
+    hover: { scale: 1.04, lift: -4 },
+    scroll: { start: "top 85%", scrub: 1, once: true },
+    horizontalStory: true,
+    marqueeDuration: 28,
+  },
+};
+
+/** Merge preset + overrides and apply the global duration scale. */
+export function resolveAnimation(config: AnimationConfig): ResolvedAnimation {
+  const preset = ANIMATION_PRESETS[config.preset];
+  const merged = { ...preset, ...config.overrides };
+  const s = config.durationScale;
+  return {
+    ...merged,
+    preset: config.preset,
+    enabled: config.enabled,
+    durationScale: s,
+    smoothScroll: config.smoothScroll,
+    duration: merged.duration * s,
+    delay: merged.delay * s,
+    stagger: merged.stagger * s,
+    marqueeDuration: merged.marqueeDuration * s,
+  };
+}
